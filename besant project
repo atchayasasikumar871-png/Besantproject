@@ -1,43 +1,70 @@
-#!/usr/bin/python3
 import random
 
-def get_computer_choice():
-    choices = ['rock', 'paper', 'scissor']
-    return random.choice(choices)
+choices = ["rock", "paper", "scissors"]
+win_map = {"rock": "scissors", "scissors": "paper", "paper": "rock"}
 
 def get_user_choice():
-    while True:
-        user_input = input("Enter your choice (rock, paper, scissor): ").lower()
-        if user_input in ['rock', 'paper', 'scissor']:
-            return user_input
-        else:
-            print("Invalid input! Please choose rock, paper or scissor.")
+    try:
+        user = input("Enter rock, paper, or scissors: ").strip().lower()
+        if user not in choices:
+            raise ValueError("Invalid choice! Please try again.")
+        return user
+    except ValueError as e:
+        print(e)
+        return get_user_choice()  # Ask again if invalid
 
-def determine_winner(user, computer):
+def get_computer_choice():
+    return random.choice(choices)
+
+def decide_winner(user, computer):
     if user == computer:
-        return "Tie"
-    elif (user == 'rock' and computer == 'scissor') or \
-         (user == 'paper' and computer == 'rock') or \
-         (user == 'scissor' and computer == 'paper'):
-        return "User wins"
+        return "draw"
+    elif win_map[user] == computer:
+        return "user"
     else:
-        return "Computer wins"
+        return "computer"
 
-def play_game():
-    print("Welcome to Rock, Paper, Scissor Game!")
+
+def play():
+    print("\n--- Rock Paper Scissors ---")
+    rounds = 0
+    user_score = 0
+    computer_score = 0
+
     while True:
-        user_choice = get_user_choice()
-        computer_choice = get_computer_choice()
-        print(f"User choice: {user_choice}")
-        print(f"Computer choice: {computer_choice}")
-        
-        result = determine_winner(user_choice, computer_choice)
-        print(f"Result: {result}")
-        
-        play_again = input("Play again? (yes/no): ").lower()
-        if play_again != 'yes':
-            print("Thank you for playing!")
+        rounds += 1
+        print(f"\nRound {rounds}")
+
+        user = get_user_choice()
+        comp = get_computer_choice()
+
+        print(f"You chose: {user}")
+        print(f"Computer chose: {comp}")
+
+        winner = decide_winner(user, comp)
+        if winner == "draw":
+            print("It's a draw!")
+        elif winner == "user":
+            print("You win this round!")
+            user_score += 1
+        else:
+            print("Computer wins this round!")
+            computer_score += 1
+
+        print(f"Score → You: {user_score} | Computer: {computer_score}")
+
+        play_again = input("\nPlay again? (yes/no): ").strip().lower()
+        if play_again != "yes":
+            print("\nGame Over!")
             break
 
+    print(f"Final Score → You: {user_score} | Computer: {computer_score}")
+    if user_score > computer_score:
+        print(" You win the match!")
+    elif user_score < computer_score:
+        print(" Computer wins the match!")
+    else:
+        print("It's a Tie!")
+
 if __name__ == "__main__":
-    play_game()
+    play()
